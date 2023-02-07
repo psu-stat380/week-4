@@ -17,7 +17,7 @@ format: html
 # format: pdf
 ---
 
-## Agenda:
+#### Agenda:
 
 1.  *Intro* to statistical learning
 
@@ -27,13 +27,7 @@ format: html
     - Inference
     - Prediction
 
-3.  Multiple regression
-    - Extension from simple linear regression
-    - ...
-
-## Visualization
-
-## Packages we will require this week
+#### Packages we will require this week:
 
 ```{r}
 #| echo: true
@@ -43,6 +37,9 @@ library(cowplot)
 library(kableExtra)
 library(htmlwidgets)
 ```
+
+
+---
 
 # Tue, Jan 31
 
@@ -55,8 +52,6 @@ Suppose we are given a dataset:
 * $\bf y$
   * called the response / outcome / dependent variables
 
-
-* * *
 
 
 The **goal** of statistical learning is to find a function $f$ such that $y = f(\bf X)$, i.e.,
@@ -181,8 +176,9 @@ summary(model)
 
 
 
+---
 
-## Thu, Feb 2
+# Thu, Feb 2
 
 In our case we want to model $y$ as a function of $x$. In `R` the formula for this looks like
 
