@@ -1,0 +1,531 @@
+---
+title: "Week 4"
+title-block-banner: true
+title-block-style: default
+execute:
+  freeze: auto
+  cache: true
+
+# server: shiny
+# format: 
+#   revealjs:
+#     # smaller: true
+#     scrollable: true
+#     fragments: true
+#     chalkboard: true
+format: html
+# format: pdf
+---
+
+## Agenda:
+
+1.  *Intro* to statistical learning
+
+2.  Simple Linear regression
+    - Motivation
+    - $\ell_2$ estimator
+    - Inference
+    - Prediction
+
+3.  Multiple regression
+    - Extension from simple linear regression
+    - ...
+
+## Visualization
+
+## Packages we will require this week
+
+```{r}
+#| echo: true
+library(tidyverse)
+library(ISLR2)
+library(cowplot)
+library(kableExtra)
+library(htmlwidgets)
+```
+
+# Tue, Jan 31
+
+## Statistical learning
+
+Suppose we are given a dataset:
+
+* $\bf X = [\bf X_{1} \  \bf X_{2} \dots \bf X_{p}]$
+  * called the predictor variables / independent variables / _covariates_
+* $\bf y$
+  * called the response / outcome / dependent variables
+
+
+* * *
+
+
+The **goal** of statistical learning is to find a function $f$ such that $y = f(\bf X)$, i.e.,
+
+$$
+\bf y_i = f(\bf X_i) = f(\bf X_{i, 1}, \bf X_{i, 2}, \dots \bf X_{i, p}),
+$$
+
+
+
+## Different Flavors: Statistical learning
+
+-   Supervised learning
+    -   Regression
+    -   Classification
+-   Unsupervised learning
+-   Semi-supervised learning
+-   Reinforcement learning
+
+
+## Teen birth rate vs Poverty
+
+* `brth15to17`: birth rate per 1000 females 15 to 17 years old
+* `povpct`: poverty rate ^[percent of the state’s population living in households with incomes below the federally defined poverty level]
+
+```{r}
+#| echo: true 
+url <- "https://online.stat.psu.edu/stat462/sites/onlinecourses.science.psu.edu.stat462/files/data/poverty/index.txt"
+
+df <- read_tsv(url)
+df %>% head(., 10) %>% kable
+```
+
+
+## Goal
+
+Predict the brith rate as a function of the poverty rate
+
+```{r}
+colnames(df) <- tolower(colnames(df))
+x <- df$povpct
+y <- df$brth15to17
+```
+
+## Scatterplot
+
+Visualize the relationship between the $x$ and $y$ variables
+
+```{r}
+#| fig-height: 5
+plt <- function(){
+  plot(
+  x,
+  y, 
+  pch=20,
+  xlab = "Pov %",
+  ylab = "Birth rate (15 - 17)"
+)
+}
+plt()
+```
+
+
+
+## Lines through the points
+
+
+```{r}
+#| echo: false
+#| fig.height: 5
+#| fig.width: 7
+b0 <- c(0, 1, 2)
+b1 <- c(1, 2, 3)
+
+
+par(mfrow=c(3, 3))
+
+for(B0 in b0){
+  for(B1 in b1){
+    plt()
+    curve( B0 + B1 * x, 0, 30, add=T, col="red")
+    title(main = paste("b0 = ", B0, " and b1= ", B1))
+  }
+}
+```
+
+
+
+## Least squares estimator
+
+```{r}
+b0 <- 10
+b1 <- 1.1
+
+yhat <- b0 + b1 * x
+
+
+plt()
+curve(b0 + b1 * x, 0, 30, add=T, col="red")
+segments(x, y, x, yhat)
+
+resids <- abs(y - yhat)^2
+ss_resids <- sum(resids)
+title(main = paste("b0, b1, ss_residuals = ", b0, b1, ss_resids, sep=","))
+```
+
+
+## The best fit line minimizes residuals
+
+
+```{r}
+model <- lm(y ~ x)
+
+sum(residuals(model)^2)
+```
+
+```{r}
+summary(model)
+```
+
+
+
+
+
+
+## Thu, Feb 2
+
+In our case we want to model $y$ as a function of $x$. In `R` the formula for this looks like
+
+```{r}
+typeof(formula(y ~ x))
+```
+
+A linear regression model in `R` is called using the **L**inear **M**odel, i.e., `lm()`
+
+```{r}
+model <- lm(y ~ x + x^2)
+```
+
+
+---
+
+# What are the null and alternate hypotheses for a regression model?
+
+Let's take a step back and think about what our objective is:
+
+> We want to find the best linear model to fit $y \sim x$
+
+Null hypothesis is that:
+
+> There is no linear relationship between $y$ and $x$. 
+
+What does this mean in terms of $\beta_0$ and $\beta_1$? This means that $\beta_1 = 0$ in $H_0$
+
+
+The alternate hypothesis is that $\beta_1 \neq 0$. 
+
+**To summarize:**
+$$
+\begin{align}
+H_0: \beta_1 = 0 && H_1: \beta_1 \neq 0
+\end{align}
+$$
+
+
+When we a see a small $p$-value, then we reject the null hypothesis in favour of the alternate hypothesis. What is the implication of this w.r.t. the original model objective? 
+
+> **There is a significant relationship between $y$ and $x$. Or, in more mathematical terms, there is significant evidence in favour of a correlation between $x$ and $y$**
+
+
+This is what the $p$-values in the model output are capturing. We can also use the `kable` function to print the results nicely:
+
+
+```{r}
+library(broom)
+library(purrr)
+
+summary(model) %>% 
+broom::tidy() %>% 
+mutate_if(is.numeric, round, 3) %>% 
+kableExtra::kbl()
+```
+
+
+---
+
+
+We have the following terminology for different components of the model.
+
+1. Covariate: $x$
+
+```{r}
+head(x)
+```
+
+2. Response: $y$
+
+```{r}
+head(y)
+```
+
+
+3. Fitted values: $\hat{y}$
+
+```{r}
+yhat <- fitted(model)
+head(yhat)
+```
+
+
+4. Residuals: $e = y - \hat{y}$
+
+```{r}
+res <- residuals(model)
+head(res)
+```
+
+
+Some other important terms are the following:
+
+1. Sum of squares for residuals: 
+
+$SS_{Res} = \sum_{i=1}^n e_i^2 = \sum_{i=1}^n (y_i - \hat{y}_i^2)$
+
+
+2. Sum of squares for regression: 
+
+$SS_{Reg} = \sum_{i=1}^n (\hat{y}_i - \bar{y})^2$
+
+
+
+3. Sum of squares Total:
+
+$SS_{Tot} = \sum_{i=1}^n ({y}_i - \bar{y})^2$
+
+
+Another important summary in the model output is the $R^2$ value, which is given as follows:
+
+$$
+R^2 = \frac{SS_{Reg}}{SS_{Tot}}
+$$
+
+
+Let's have a look at what this means in the following example. I'm going to create the following synthetic examples. 
+
+
+```{r}
+x <- seq(0, 5, length=100)
+
+b0 <- 1
+b1 <- 3
+
+y1 <- b0 + b1 * x + rnorm(100)
+y2 <- b0 + b1 * x + rnorm(100) * 3
+
+
+par(mfrow=c(1,2))
+
+
+plot(x, y1)
+plot(x, y2)
+```
+
+
+```{r}
+model1 <- lm(y1 ~ x)
+model2 <- lm(y2 ~ x)
+
+par(mfrow=c(1, 2))
+
+plot(x, y1)
+curve(
+  coef(model1)[1] + coef(model1)[2] * x, 
+  add=T, col="red"
+)
+
+plot(x, y2)
+curve(
+  coef(model2)[1] + coef(model2)[2] * x, 
+  add=T, col="red"
+)
+```
+
+The summary for model1 is:
+
+```{r}
+summary(model1)
+```
+
+The summary for model2 is:
+
+```{r}
+summary(model2)
+```
+
+
+
+---
+
+
+THe last thing we're going to talk about in simple linear regression is **prediction**. It's the ability of a model to predict values for "unseen" data. 
+
+
+Let's go back to the poverty dataset. 
+
+```{r}
+x <- df$povpct
+y <- df$brth15to17
+plt()
+```
+
+
+Suppose we have a "new" state formed whose `povct` value is $22$
+
+```{r}
+plt()
+abline(v=21, col="green")
+```
+
+
+What is the best guess for this prediction going to be? We could consider the regression line
+
+
+```{r}
+plt()
+abline(v=21, col="green")
+lines(x, fitted(lm(y~x)), col="red")
+```
+
+and  our best prediction is going to be the intersection. In `R` we can use the `predict()` function to do this:
+
+```{r}
+new_x <- data.frame(x = c(21))
+new_y <- predict(model, new_x)
+
+new_y
+```
+
+
+If we plot this new point we get
+
+```{r}
+plt()
+abline(v=21, col="green")
+lines(x, fitted(lm(y~x)), col="red")
+points(new_x, new_y, col="purple")
+```
+
+
+We can make predictions not just for a single observation, but for a whole collection of observations. 
+
+
+```{r}
+new_x <- data.frame(x = c(1:21) )
+new_y <- predict(model, new_x)
+new_y
+```
+
+This is what the plot looks like:
+
+```{r}
+plt()
+for(a in new_x$x){abline(v=a, col="green")}
+lines(x, fitted(lm(y~x)), col="red")
+points(new_x %>% unlist(), new_y %>% unlist(), col="purple")
+```
+
+
+
+
+
+<!-- 
+
+
+
+
+
+
+
+
+
+
+## Scatterplot
+
+```{r}
+"scatterplot of brth15to17 vs povpct"
+colnames(df) <- tolower(colnames(df))
+
+plt <- function(){
+  plot(
+  df$povpct,
+  df$brth15to17,
+  pch=20,
+  xlab="Poverty %",
+  ylab="Birth Rate"
+  )
+}
+plt()
+```
+
+
+## Fitting a line
+
+```{r}
+#| echo: true
+b0 <- 1
+b1 <- 2
+
+plt()
+curve(b0 + b1 * x, 5, 30, add=T, col="red")
+```
+
+
+## Residuals
+
+
+```{r}
+
+x <- df$povpct
+y <- df$brth15to17
+y_hat <- b0 + b1 * x
+
+plot(x, y)
+points(x, y_hat, col="red")
+curve(b0 + b1 * x, 5, 30, add=T)
+segments(x, y, x, y_hat)
+```
+
+apply()
+
+
+## Boston house prices dataset
+
+-   `medv`: Median value of owner-occupied homes
+-   `dist`: Average distance to the work districts
+-   `rm`: Average number of rooms per dwelling
+
+```{r}
+url <- "https://raw.githubusercontent.com/selva86/datasets/master/BostonHousing.csv"
+
+df <- read_csv(url) 
+
+head(df) %>% kbl()
+```
+
+---
+
+### Variable Description
+
+![Source: <https://www.cs.toronto.edu/~delve/data/boston/bostonDetail.html>](images/var_names.png)
+
+---
+
+
+```{r}
+#| fig-height: 9
+#| fig-width: 7
+#| echo: false
+par(mfrow=c(2,2))
+columns <- c("crim", "rm", "dis", "tax")
+
+df %>% 
+  select(columns) %>% 
+  map(~{
+    ggplot(df) + 
+    geom_point(aes(x=., y=medv), xlab=.) + 
+    geom_smooth(aes(x=., y=medv), method=lm)
+    }) %>%
+  plot_grid(plotlist = .)
+```
+
+ -->
