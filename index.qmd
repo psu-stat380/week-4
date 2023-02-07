@@ -85,7 +85,6 @@ df <- read_tsv(url)
 df %>% head(., 10) %>% kable
 ```
 
-
 ## Goal
 
 Predict the brith rate as a function of the poverty rate
@@ -116,13 +115,13 @@ plt()
 
 
 
-## Lines through the points
+Let's draw lines through the points to discover the relationship between _Pov %_ and _Birth Rate_
 
 
 ```{r}
 #| echo: false
-#| fig.height: 5
-#| fig.width: 7
+#| fig.height: 8
+#| fig.width: 8
 b0 <- c(0, 1, 2)
 b1 <- c(1, 2, 3)
 
@@ -138,6 +137,8 @@ for(B0 in b0){
 }
 ```
 
+
+In order to choose the "best" fit, we need a more principled strategy. 
 
 
 ## Least squares estimator
@@ -255,7 +256,7 @@ head(y)
 ```
 
 
-3. Fitted values: $\hat{y}$
+3. Fitted values: $\hat{y} = \beta_0 + \beta_1 x$
 
 ```{r}
 yhat <- fitted(model)
@@ -275,18 +276,33 @@ Some other important terms are the following:
 
 1. Sum of squares for residuals: 
 
-$SS_{Res} = \sum_{i=1}^n e_i^2 = \sum_{i=1}^n (y_i - \hat{y}_i^2)$
+$$SS_{Res} = \sum_{i=1}^n e_i^2 = \sum_{i=1}^n (y_i - \hat{y}_i^2)$$
+
+```{r}
+ss_res <- res^2 %>% sum()
+ss_res
+```
+
 
 
 2. Sum of squares for regression: 
 
-$SS_{Reg} = \sum_{i=1}^n (\hat{y}_i - \bar{y})^2$
+$$SS_{Reg} = \sum_{i=1}^n (\hat{y}_i - \bar{y})^2$$
+```{r}
+ss_reg <- (yhat - mean(y))^2 %>% sum()
+ss_reg
+```
 
 
 
 3. Sum of squares Total:
 
-$SS_{Tot} = \sum_{i=1}^n ({y}_i - \bar{y})^2$
+$$SS_{Tot} = \sum_{i=1}^n ({y}_i - \bar{y})^2$$
+
+```{r}
+ss_tot <- (y - mean(y))^2 %>% sum()
+ss_tot
+```
 
 
 Another important summary in the model output is the $R^2$ value, which is given as follows:
@@ -294,6 +310,19 @@ Another important summary in the model output is the $R^2$ value, which is given
 $$
 R^2 = \frac{SS_{Reg}}{SS_{Tot}}
 $$
+
+
+```{r}
+r_squared <- ss_reg / ss_tot
+r_squared
+```
+
+We can see that this is the same as what we get in the model summary as well
+
+```{r}
+summary(model)$r.squared
+```
+
 
 
 Let's have a look at what this means in the following example. I'm going to create the following synthetic examples. 

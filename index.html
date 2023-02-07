@@ -334,14 +334,13 @@ dbl (5): PovPct, Brth15to17, Brth18to19, ViolCrime, TeenBrth
 <p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-</section>
-<section id="lines-through-the-points" class="level2">
-<h2 class="anchored" data-anchor-id="lines-through-the-points">Lines through the points</h2>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-5_27b32c76a4cdb628a54c7147ab15ad51">
+<p>Let’s draw lines through the points to discover the relationship between <em>Pov %</em> and <em>Birth Rate</em></p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-5_8e9f03f26471b49abec07367d3f41b46">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
+<p>In order to choose the “best” fit, we need a more principled strategy.</p>
 </section>
 <section id="least-squares-estimator" class="level2">
 <h2 class="anchored" data-anchor-id="least-squares-estimator">Least squares estimator</h2>
@@ -498,7 +497,7 @@ H_0: \beta_1 = 0 &amp;&amp; H_1: \beta_1 \neq 0
 </div>
 </div>
 <ol start="3" type="1">
-<li>Fitted values: <span class="math inline">\(\hat{y}\)</span></li>
+<li>Fitted values: <span class="math inline">\(\hat{y} = \beta_0 + \beta_1 x\)</span></li>
 </ol>
 <div class="cell" data-hash="index_cache/html/unnamed-chunk-14_ebad014109558a3d8c02137bcfcac803">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>yhat <span class="ot">&lt;-</span> <span class="fu">fitted</span>(model)</span>
@@ -523,87 +522,122 @@ H_0: \beta_1 = 0 &amp;&amp; H_1: \beta_1 \neq 0
 <ol type="1">
 <li>Sum of squares for residuals:</li>
 </ol>
-<p><span class="math inline">\(SS_{Res} = \sum_{i=1}^n e_i^2 = \sum_{i=1}^n (y_i - \hat{y}_i^2)\)</span></p>
+<p><span class="math display">\[SS_{Res} = \sum_{i=1}^n e_i^2 = \sum_{i=1}^n (y_i - \hat{y}_i^2)\]</span></p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-16_2d8f14b1091654719ea9f92c79792f72">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ss_res <span class="ot">&lt;-</span> res<span class="sc">^</span><span class="dv">2</span> <span class="sc">%&gt;%</span> <span class="fu">sum</span>()</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>ss_res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1509.635</code></pre>
+</div>
+</div>
 <ol start="2" type="1">
 <li>Sum of squares for regression:</li>
 </ol>
-<p><span class="math inline">\(SS_{Reg} = \sum_{i=1}^n (\hat{y}_i - \bar{y})^2\)</span></p>
+<p><span class="math display">\[SS_{Reg} = \sum_{i=1}^n (\hat{y}_i - \bar{y})^2\]</span></p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-17_f1e4b89a20e5437b7b68cb114ba565b3">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ss_reg <span class="ot">&lt;-</span> (yhat <span class="sc">-</span> <span class="fu">mean</span>(y))<span class="sc">^</span><span class="dv">2</span> <span class="sc">%&gt;%</span> <span class="fu">sum</span>()</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>ss_reg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1725.259</code></pre>
+</div>
+</div>
 <ol start="3" type="1">
 <li>Sum of squares Total:</li>
 </ol>
-<p><span class="math inline">\(SS_{Tot} = \sum_{i=1}^n ({y}_i - \bar{y})^2\)</span></p>
+<p><span class="math display">\[SS_{Tot} = \sum_{i=1}^n ({y}_i - \bar{y})^2\]</span></p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-18_68c5f5e478f545b73dbb54a2783dfbc1">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>ss_tot <span class="ot">&lt;-</span> (y <span class="sc">-</span> <span class="fu">mean</span>(y))<span class="sc">^</span><span class="dv">2</span> <span class="sc">%&gt;%</span> <span class="fu">sum</span>()</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>ss_tot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3234.894</code></pre>
+</div>
+</div>
 <p>Another important summary in the model output is the <span class="math inline">\(R^2\)</span> value, which is given as follows:</p>
 <p><span class="math display">\[
 R^2 = \frac{SS_{Reg}}{SS_{Tot}}
 \]</span></p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-19_0bb8463bcc0c7969a420f4671a2a1697">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>r_squared <span class="ot">&lt;-</span> ss_reg <span class="sc">/</span> ss_tot</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>r_squared</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.533328</code></pre>
+</div>
+</div>
+<p>We can see that this is the same as what we get in the model summary as well</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-20_ca9f385dfe73be9ab56538068c60e926">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)<span class="sc">$</span>r.squared</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.533328</code></pre>
+</div>
+</div>
 <p>Let’s have a look at what this means in the following example. I’m going to create the following synthetic examples.</p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-16_1b10c4b89a13409cc242f85bdddbdfd7">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="at">length=</span><span class="dv">100</span>)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>b0 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>b1 <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> b0 <span class="sc">+</span> b1 <span class="sc">*</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">100</span>)</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>y2 <span class="ot">&lt;-</span> b0 <span class="sc">+</span> b1 <span class="sc">*</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">100</span>) <span class="sc">*</span> <span class="dv">3</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y1)</span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-21_30802faf86ed0c9b1eabe9abd4e6468a">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="at">length=</span><span class="dv">100</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>b0 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>b1 <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> b0 <span class="sc">+</span> b1 <span class="sc">*</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">100</span>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>y2 <span class="ot">&lt;-</span> b0 <span class="sc">+</span> b1 <span class="sc">*</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">100</span>) <span class="sc">*</span> <span class="dv">3</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y1)</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-17_5e7b3c470ead58345aca739eeb5eb031">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y1 <span class="sc">~</span> x)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y2 <span class="sc">~</span> x)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y1)</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coef</span>(model1)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(model1)[<span class="dv">2</span>] <span class="sc">*</span> x, </span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">add=</span>T, <span class="at">col=</span><span class="st">"red"</span></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y2)</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coef</span>(model2)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(model2)[<span class="dv">2</span>] <span class="sc">*</span> x, </span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">add=</span>T, <span class="at">col=</span><span class="st">"red"</span></span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-22_8f76f2d6899e667d8cbe1dece924efc1">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y1 <span class="sc">~</span> x)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y2 <span class="sc">~</span> x)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y1)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coef</span>(model1)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(model1)[<span class="dv">2</span>] <span class="sc">*</span> x, </span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">add=</span>T, <span class="at">col=</span><span class="st">"red"</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y2)</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coef</span>(model2)[<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">coef</span>(model2)[<span class="dv">2</span>] <span class="sc">*</span> x, </span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">add=</span>T, <span class="at">col=</span><span class="st">"red"</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>The summary for model1 is:</p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-18_f0f3371d049112ef90c7dc18060e9287">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-23_fa83f64e69cc6788bcbbd9e2558dc653">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
 lm(formula = y1 ~ x)
 
 Residuals:
-    Min      1Q  Median      3Q     Max 
--2.5373 -0.6707 -0.0229  0.7047  3.3523 
+     Min       1Q   Median       3Q      Max 
+-2.11172 -0.70396 -0.02159  0.63726  2.20650 
 
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  0.89300    0.20612   4.333 3.57e-05 ***
-x            3.04796    0.07122  42.796  &lt; 2e-16 ***
+(Intercept)  1.26139    0.18155   6.948 4.12e-10 ***
+x            2.92655    0.06273  46.650  &lt; 2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1.038 on 98 degrees of freedom
-Multiple R-squared:  0.9492,    Adjusted R-squared:  0.9487 
-F-statistic:  1831 on 1 and 98 DF,  p-value: &lt; 2.2e-16</code></pre>
+Residual standard error: 0.9146 on 98 degrees of freedom
+Multiple R-squared:  0.9569,    Adjusted R-squared:  0.9565 
+F-statistic:  2176 on 1 and 98 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>The summary for model2 is:</p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-19_84d9495c90c9593a437f1c19c67a29de">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-24_b50d7738926a5d79969cf20a2ca0dbad">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -611,74 +645,74 @@ lm(formula = y2 ~ x)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--7.2686 -1.8646 -0.1205  1.8310  7.4409 
+-6.9332 -1.8998  0.1324  1.7990 10.3501 
 
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)   1.8819     0.5412   3.477 0.000756 ***
-x             2.6740     0.1870  14.300  &lt; 2e-16 ***
+(Intercept)   0.7385     0.6131   1.205    0.231    
+x             3.2541     0.2118  15.361   &lt;2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 2.726 on 98 degrees of freedom
-Multiple R-squared:  0.676, Adjusted R-squared:  0.6727 
-F-statistic: 204.5 on 1 and 98 DF,  p-value: &lt; 2.2e-16</code></pre>
+Residual standard error: 3.088 on 98 degrees of freedom
+Multiple R-squared:  0.7065,    Adjusted R-squared:  0.7036 
+F-statistic:   236 on 1 and 98 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <hr>
 <p>THe last thing we’re going to talk about in simple linear regression is <strong>prediction</strong>. It’s the ability of a model to predict values for “unseen” data.</p>
 <p>Let’s go back to the poverty dataset.</p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-20_8f9401efda18eba300e45ab7d4f56bf6">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> df<span class="sc">$</span>povpct</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> df<span class="sc">$</span>brth15to17</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-25_87c1502e1fef54831929aaf39df51c48">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> df<span class="sc">$</span>povpct</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> df<span class="sc">$</span>brth15to17</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Suppose we have a “new” state formed whose <code>povct</code> value is <span class="math inline">\(22\)</span></p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-21_188e107237c4d12608dc254ca094f20c">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plt</span>()</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">21</span>, <span class="at">col=</span><span class="st">"green"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-26_d8f1f32402232b2c8c6b19ffae894c52">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plt</span>()</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">21</span>, <span class="at">col=</span><span class="st">"green"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>What is the best guess for this prediction going to be? We could consider the regression line</p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-22_4f2bdd563e9fa924285b17eb8be7be7a">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plt</span>()</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">21</span>, <span class="at">col=</span><span class="st">"green"</span>)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">fitted</span>(<span class="fu">lm</span>(y<span class="sc">~</span>x)), <span class="at">col=</span><span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-27_0ed61e7eaf3a831c0f04574650142bde">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plt</span>()</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">21</span>, <span class="at">col=</span><span class="st">"green"</span>)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">fitted</span>(<span class="fu">lm</span>(y<span class="sc">~</span>x)), <span class="at">col=</span><span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>and our best prediction is going to be the intersection. In <code>R</code> we can use the <code>predict()</code> function to do this:</p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-23_452d9e9dbd0a7893d70b18c3dec6caeb">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>new_x <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">21</span>))</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>new_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, new_x)</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>new_y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-28_65abd74ee737256fff7e17b804efc3dd">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>new_x <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">21</span>))</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>new_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, new_x)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>new_y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       1 
 33.10755 </code></pre>
 </div>
 </div>
 <p>If we plot this new point we get</p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-24_00b1cd367fb3a9b40c279d38c55d105f">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plt</span>()</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">21</span>, <span class="at">col=</span><span class="st">"green"</span>)</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">fitted</span>(<span class="fu">lm</span>(y<span class="sc">~</span>x)), <span class="at">col=</span><span class="st">"red"</span>)</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(new_x, new_y, <span class="at">col=</span><span class="st">"purple"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-29_e8d031076db4f64e3b0366d8fa006fd1">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plt</span>()</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">21</span>, <span class="at">col=</span><span class="st">"green"</span>)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">fitted</span>(<span class="fu">lm</span>(y<span class="sc">~</span>x)), <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(new_x, new_y, <span class="at">col=</span><span class="st">"purple"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>We can make predictions not just for a single observation, but for a whole collection of observations.</p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-25_a5c2db981a8a844eb18ace1afeded406">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>new_x <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">21</span>) )</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>new_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, new_x)</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>new_y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-30_12c2981dc9bcc0a6881c2d6ef73a4561">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>new_x <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">21</span>) )</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>new_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, new_x)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>new_y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        1         2         3         4         5         6         7         8 
  5.640638  7.013984  8.387329  9.760674 11.134020 12.507365 13.880711 15.254056 
@@ -689,13 +723,13 @@ F-statistic: 204.5 on 1 and 98 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>This is what the plot looks like:</p>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-26_250b0bc74d19ec22b8e6d04f509c0a9c">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plt</span>()</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(a <span class="cf">in</span> new_x<span class="sc">$</span>x){<span class="fu">abline</span>(<span class="at">v=</span>a, <span class="at">col=</span><span class="st">"green"</span>)}</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">fitted</span>(<span class="fu">lm</span>(y<span class="sc">~</span>x)), <span class="at">col=</span><span class="st">"red"</span>)</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(new_x <span class="sc">%&gt;%</span> <span class="fu">unlist</span>(), new_y <span class="sc">%&gt;%</span> <span class="fu">unlist</span>(), <span class="at">col=</span><span class="st">"purple"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-31_36df1f8c4bd362765568a6f2e7120d11">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plt</span>()</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(a <span class="cf">in</span> new_x<span class="sc">$</span>x){<span class="fu">abline</span>(<span class="at">v=</span>a, <span class="at">col=</span><span class="st">"green"</span>)}</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">fitted</span>(<span class="fu">lm</span>(y<span class="sc">~</span>x)), <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(new_x <span class="sc">%&gt;%</span> <span class="fu">unlist</span>(), new_y <span class="sc">%&gt;%</span> <span class="fu">unlist</span>(), <span class="at">col=</span><span class="st">"purple"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
@@ -713,7 +747,7 @@ F-statistic: 204.5 on 1 and 98 DF,  p-value: &lt; 2.2e-16</code></pre>
 ## Scatterplot
 
 
-::: {.cell hash='index_cache/html/unnamed-chunk-27_6349fb3d28319bc91a5f8f19e4b0067e'}
+::: {.cell hash='index_cache/html/unnamed-chunk-32_70a4d63f1ab96ce1f94d6989fd6431e9'}
 
 ```{.r .cell-code}
 "scatterplot of brth15to17 vs povpct"
@@ -741,7 +775,7 @@ plt()
 ```
 
 ::: {.cell-output-display}
-![](index_files/figure-html/unnamed-chunk-27-1.png){width=672}
+![](index_files/figure-html/unnamed-chunk-32-1.png){width=672}
 :::
 :::
 
@@ -750,7 +784,7 @@ plt()
 ## Fitting a line
 
 
-::: {.cell hash='index_cache/html/unnamed-chunk-28_bb6dfe422c1a61ce4fe294a5a873c2a4'}
+::: {.cell hash='index_cache/html/unnamed-chunk-33_31d92af587c4ec23d846fb3504f4636b'}
 
 ```{.r .cell-code}
 b0 <- 1
@@ -761,7 +795,7 @@ curve(b0 + b1 * x, 5, 30, add=T, col="red")
 ```
 
 ::: {.cell-output-display}
-![](index_files/figure-html/unnamed-chunk-28-1.png){width=672}
+![](index_files/figure-html/unnamed-chunk-33-1.png){width=672}
 :::
 :::
 
@@ -771,7 +805,7 @@ curve(b0 + b1 * x, 5, 30, add=T, col="red")
 
 
 
-::: {.cell hash='index_cache/html/unnamed-chunk-29_c54d912b961fa8572e2b15d72d18589d'}
+::: {.cell hash='index_cache/html/unnamed-chunk-34_9ff74ce4b080ae8df8825af998076685'}
 
 ```{.r .cell-code}
 x <- df$povpct
@@ -785,7 +819,7 @@ segments(x, y, x, y_hat)
 ```
 
 ::: {.cell-output-display}
-![](index_files/figure-html/unnamed-chunk-29-1.png){width=672}
+![](index_files/figure-html/unnamed-chunk-34-1.png){width=672}
 :::
 :::
 
@@ -800,7 +834,7 @@ apply()
 -   `rm`: Average number of rooms per dwelling
 
 
-::: {.cell hash='index_cache/html/unnamed-chunk-30_5e7fde884e98996c901dcb186376699a'}
+::: {.cell hash='index_cache/html/unnamed-chunk-35_11e524d560721b753c4b23619b83f179'}
 
 ```{.r .cell-code}
 url <- "https://raw.githubusercontent.com/selva86/datasets/master/BostonHousing.csv"
@@ -962,7 +996,7 @@ head(df) %>% kbl()
 
 
 
-::: {.cell hash='index_cache/html/unnamed-chunk-31_1f1e94a8cff25997d38a0046de5eba94'}
+::: {.cell hash='index_cache/html/unnamed-chunk-36_7e7adedd9e2873de2ff2e9bda7aa3052'}
 ::: {.cell-output .cell-output-stderr}
 ```
 Warning: Using an external vector in selections was deprecated in tidyselect 1.1.0.
@@ -996,7 +1030,7 @@ Ignoring unknown parameters: `xlab`
 :::
 
 ::: {.cell-output-display}
-![](index_files/figure-html/unnamed-chunk-31-1.png){width=672}
+![](index_files/figure-html/unnamed-chunk-36-1.png){width=672}
 :::
 :::
 
